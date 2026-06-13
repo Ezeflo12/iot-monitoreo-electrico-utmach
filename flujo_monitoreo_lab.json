@@ -1,0 +1,983 @@
+[
+    {
+        "id": "tab_energia_final",
+        "type": "tab",
+        "label": "UTMACH Energía PRO",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ui_css",
+        "type": "ui-template",
+        "z": "tab_energia_final",
+        "group": "g_head",
+        "name": "CSS y Reloj",
+        "order": 1,
+        "width": "12",
+        "height": "2",
+        "format": "<style>\n    body { background: radial-gradient(circle at 50% 0%, #0a192f 0%, #020c1b 100%) !important; }\n    .nr-dashboard-group { \n        background: rgba(2, 12, 27, 0.8) !important; \n        border: 1px solid #00d2ff !important; \n        box-shadow: 0 0 15px rgba(0,210,255,0.1) !important;\n    }\n    .nr-dashboard-cardtitle { color: #00d2ff !important; font-family: 'Consolas', monospace; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px dashed rgba(0,210,255,0.4); }\n    .nr-dashboard-gauge svg path { filter: drop-shadow(0 0 6px currentColor); }\n    .nr-dashboard-gauge .value { text-shadow: 0 0 10px currentColor; font-weight: 900; font-family: 'Consolas', monospace; }\n    .head-wrap { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; color:#fff; font-family: 'Consolas', monospace; }\n    .head-reloj { font-size: 2.8em; font-weight: bold; color: #00d2ff; text-shadow: 0 0 15px #00d2ff; }\n    .head-text { text-align: right; color: #8892b0; }\n</style>\n\n<div class=\"head-wrap\">\n    <div class=\"head-reloj\" id=\"reloj_utmach\">00:00:00</div>\n    <div class=\"head-text\">\n        <div id=\"fecha_utmach\" style=\"font-size:1.2em; color:#ccd6f6;\">Fecha</div>\n        <div><i class=\"fa fa-bolt\"></i> Facultad Ingeniería Civil - Tecnologías de la Información</div>\n    </div>\n</div>\n\n<script>\n    setInterval(() => {\n        const d = new Date();\n        document.getElementById('reloj_utmach').innerText = d.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit', second: '2-digit' });\n        document.getElementById('fecha_utmach').innerText = d.toLocaleDateString('es-EC', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });\n    }, 1000);\n</script>",
+        "storeOutMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 170,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_dropdown_lab",
+        "type": "ui-dropdown",
+        "z": "tab_energia_final",
+        "group": "g_control",
+        "name": "Laboratorio",
+        "label": "Ubicación:",
+        "tooltip": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Lab. Hardware y Software",
+                "value": "1",
+                "type": "num"
+            },
+            {
+                "label": "Lab. Diseño y Multimedia",
+                "value": "2",
+                "type": "num"
+            },
+            {
+                "label": "Lab. Software I y II",
+                "value": "3",
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 130,
+        "y": 140,
+        "wires": [
+            [
+                "ch_save_lab"
+            ]
+        ]
+    },
+    {
+        "id": "ch_save_lab",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Guardar Lab",
+        "rules": [
+            {
+                "t": "set",
+                "p": "lab_select",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "ch_simulacion"
+            ]
+        ]
+    },
+    {
+        "id": "ui_switch_corte",
+        "type": "ui-switch",
+        "z": "tab_energia_final",
+        "name": "Corte Energía",
+        "label": "Corte de Emergencia",
+        "group": "g_control",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "className": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "red",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "gray",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "ch_save_corte"
+            ]
+        ]
+    },
+    {
+        "id": "ch_save_corte",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Guardar Corte",
+        "rules": [
+            {
+                "t": "set",
+                "p": "corte_emergencia",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "ch_simulacion"
+            ]
+        ]
+    },
+    {
+        "id": "inj_1s",
+        "type": "inject",
+        "z": "tab_energia_final",
+        "name": "Reloj 1s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 260,
+        "wires": [
+            [
+                "ch_simulacion"
+            ]
+        ]
+    },
+    {
+        "id": "ch_simulacion",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Simulación Eléctrica",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "(\t    $lab := $exists($flowContext(\"lab_select\")) ? $flowContext(\"lab_select\") : 1;\t    $apagado := $flowContext(\"corte_emergencia\") = true ? true : false;\t    \t    $v := $apagado ? 0 : $round($random() * 8 + 116, 1);\t    $i_base := $apagado ? 0 : ($lab = 1 ? 8 : ($lab = 2 ? 22 : 15));\t    $i := $apagado ? 0 : $round($random() * 5 + $i_base, 2);\t    $p := $round($v * $i, 2);\t    $kwh_s := $p / 3600000;\t    \t    {\t        \"voltaje\": $v,\t        \"corriente\": $i,\t        \"potencia\": $p,\t        \"kwh_s\": $kwh_s,\t        \"alerta_v\": $v > 0 and ($v < 118 or $v > 123),\t        \"alerta_p\": $p > ($i_base * 125)\t    }\t)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 260,
+        "wires": [
+            [
+                "ch_acumular"
+            ]
+        ]
+    },
+    {
+        "id": "ch_acumular",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Acumulador kWh Seguro",
+        "rules": [
+            {
+                "t": "set",
+                "p": "kwh_total",
+                "pt": "flow",
+                "to": "$exists($flowContext(\"kwh_total\")) ? $flowContext(\"kwh_total\") + payload.kwh_s : payload.kwh_s",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload.cons_h",
+                "pt": "msg",
+                "to": "$round($flowContext(\"kwh_total\"), 4)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload.cons_d",
+                "pt": "msg",
+                "to": "$round($flowContext(\"kwh_total\") * 24, 2)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload.cons_w",
+                "pt": "msg",
+                "to": "$round($flowContext(\"kwh_total\") * 24 * 7, 2)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 260,
+        "wires": [
+            [
+                "mqtt_out"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out",
+        "type": "mqtt out",
+        "z": "tab_energia_final",
+        "name": "TX",
+        "topic": "utmach/laboratorio",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b0f5784b1953f4a5",
+        "x": 750,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "mqtt_in",
+        "type": "mqtt in",
+        "z": "tab_energia_final",
+        "name": "RX",
+        "topic": "utmach/laboratorio",
+        "qos": "0",
+        "datatype": "json",
+        "broker": "b0f5784b1953f4a5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 420,
+        "wires": [
+            [
+                "ch_split_v",
+                "ch_split_i",
+                "ch_split_p",
+                "ch_split_chart",
+                "ui_template_alertas",
+                "ch_bar_1h",
+                "ch_bar_24h",
+                "ch_bar_7d"
+            ]
+        ]
+    },
+    {
+        "id": "ch_split_v",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "V",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.voltaje",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "gauge_v"
+            ]
+        ]
+    },
+    {
+        "id": "ch_split_i",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "I",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.corriente",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 400,
+        "wires": [
+            [
+                "gauge_i"
+            ]
+        ]
+    },
+    {
+        "id": "ch_split_p",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "P",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.potencia",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 440,
+        "wires": [
+            [
+                "gauge_p"
+            ]
+        ]
+    },
+    {
+        "id": "ch_split_chart",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Línea",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Potencia Activa",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.potencia",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 480,
+        "wires": [
+            [
+                "chart_line"
+            ]
+        ]
+    },
+    {
+        "id": "ch_bar_1h",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Bar 1h",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "1 Hora",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.cons_h",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 520,
+        "wires": [
+            [
+                "chart_bar"
+            ]
+        ]
+    },
+    {
+        "id": "ch_bar_24h",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Bar 24h",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "24 Horas",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.cons_d",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 560,
+        "wires": [
+            [
+                "chart_bar"
+            ]
+        ]
+    },
+    {
+        "id": "ch_bar_7d",
+        "type": "change",
+        "z": "tab_energia_final",
+        "name": "Bar 7d",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "7 Días",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.cons_w",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 600,
+        "wires": [
+            [
+                "chart_bar"
+            ]
+        ]
+    },
+    {
+        "id": "gauge_v",
+        "type": "ui-gauge",
+        "z": "tab_energia_final",
+        "name": "Voltaje",
+        "group": "g_gauges",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Voltaje",
+        "alwaysShowTitle": true,
+        "floatingTitlePosition": "top-left",
+        "units": "V",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#ff003c",
+                "text": ""
+            },
+            {
+                "from": "115",
+                "color": "#00d2ff",
+                "text": ""
+            },
+            {
+                "from": "125",
+                "color": "#ff003c",
+                "text": ""
+            }
+        ],
+        "min": "100",
+        "max": "140",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 450,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "gauge_i",
+        "type": "ui-gauge",
+        "z": "tab_energia_final",
+        "name": "Corriente",
+        "group": "g_gauges",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "2",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Corriente",
+        "alwaysShowTitle": true,
+        "floatingTitlePosition": "top-left",
+        "units": "A",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#00ff88",
+                "text": ""
+            },
+            {
+                "from": "15",
+                "color": "#ffc800",
+                "text": ""
+            },
+            {
+                "from": "25",
+                "color": "#ff003c",
+                "text": ""
+            }
+        ],
+        "min": 0,
+        "max": "35",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 460,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "gauge_p",
+        "type": "ui-gauge",
+        "z": "tab_energia_final",
+        "name": "Potencia",
+        "group": "g_gauges",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "3",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Potencia",
+        "alwaysShowTitle": true,
+        "floatingTitlePosition": "top-left",
+        "units": "W",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#00ff88",
+                "text": ""
+            },
+            {
+                "from": "1500",
+                "color": "#ffc800",
+                "text": ""
+            },
+            {
+                "from": "3000",
+                "color": "#ff003c",
+                "text": ""
+            }
+        ],
+        "min": 0,
+        "max": "4000",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 460,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "chart_line",
+        "type": "ui-chart",
+        "z": "tab_energia_final",
+        "group": "g_chart_line",
+        "name": "Línea",
+        "order": 1,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "Tiempo",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "HH:mm:ss",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "Watts",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "0",
+        "ymax": "4000",
+        "bins": "10",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "60",
+        "removeOlderPoints": "",
+        "colors": [
+            "#00d2ff",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#00d2ff"
+        ],
+        "textColorDefault": false,
+        "gridColor": [
+            "#233554"
+        ],
+        "gridColorDefault": false,
+        "width": "8",
+        "height": "6",
+        "className": "",
+        "interpolation": "linear",
+        "x": 450,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "chart_bar",
+        "type": "ui-chart",
+        "z": "tab_energia_final",
+        "group": "g_chart_bar",
+        "name": "Barras Históricas",
+        "order": 1,
+        "chartType": "bar",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "category",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "kWh",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "0",
+        "ymax": "",
+        "bins": "10",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": false,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#00d2ff",
+            "#00ff88",
+            "#ffc800",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#00d2ff"
+        ],
+        "textColorDefault": false,
+        "gridColor": [
+            "#233554"
+        ],
+        "gridColorDefault": false,
+        "width": "4",
+        "height": "6",
+        "className": "",
+        "x": 470,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_template_alertas",
+        "type": "ui-template",
+        "z": "tab_energia_final",
+        "group": "g_alertas",
+        "name": "Panel HTML Alertas + Barras CSS",
+        "order": 1,
+        "width": "12",
+        "height": "4",
+        "format": "<div style=\"display:flex; gap:20px; font-family:'Consolas', monospace; height:100%;\">\n    \n    <div style=\"flex:1; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:15px;\">\n        <h3 style=\"color:#00d2ff; margin-top:0; border-bottom:1px solid #00d2ff; padding-bottom:5px;\"><i class=\"fa fa-warning\"></i> DIAGNÓSTICO LED</h3>\n        \n        <div style=\"display:flex; justify-content:space-between; align-items:center; margin-top:20px;\">\n            <span style=\"color:#ccd6f6; font-size:1.1em;\">Estado Voltaje:</span>\n            <div style=\"display:flex; align-items:center; gap:10px;\">\n                <span style=\"color: {{msg.payload.alerta_v ? '#ff003c' : '#00ff88'}}; font-weight:bold; text-shadow:0 0 8px currentColor;\">\n                    {{msg.payload.alerta_v ? 'ANORMAL' : 'ESTABLE'}}\n                </span>\n                <div style=\"width:18px; height:18px; border-radius:50%; background-color: {{msg.payload.alerta_v ? '#ff003c' : '#00ff88'}}; box-shadow: 0 0 15px {{msg.payload.alerta_v ? '#ff003c' : '#00ff88'}};\"></div>\n            </div>\n        </div>\n\n        <div style=\"display:flex; justify-content:space-between; align-items:center; margin-top:20px;\">\n            <span style=\"color:#ccd6f6; font-size:1.1em;\">Sobrecarga Potencia:</span>\n            <div style=\"display:flex; align-items:center; gap:10px;\">\n                <span style=\"color: {{msg.payload.alerta_p ? '#ff003c' : '#00ff88'}}; font-weight:bold; text-shadow:0 0 8px currentColor;\">\n                    {{msg.payload.alerta_p ? 'PELIGRO' : 'ÓPTIMO'}}\n                </span>\n                <div style=\"width:18px; height:18px; border-radius:50%; background-color: {{msg.payload.alerta_p ? '#ff003c' : '#00ff88'}}; box-shadow: 0 0 15px {{msg.payload.alerta_p ? '#ff003c' : '#00ff88'}};\"></div>\n            </div>\n        </div>\n    </div>\n\n    \n    <div style=\"flex:1; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:15px;\">\n        <h3 style=\"color:#00ff88; margin-top:0; border-bottom:1px solid #00ff88; padding-bottom:5px;\"><i class=\"fa fa-battery-three-quarters\"></i> PROYECCIÓN kWh</h3>\n        \n        <div style=\"margin-top:10px;\">\n            <div style=\"display:flex; justify-content:space-between; color:#ccd6f6;\"><span>1 Hora:</span> <strong style=\"color:#00d2ff;\">{{msg.payload.cons_h}} kWh</strong></div>\n            <div style=\"width:100%; height:6px; background:#112233; margin-top:5px; border-radius:3px; overflow:hidden;\">\n                <div style=\"width:{{msg.payload.cons_h * 10}}%; height:100%; background:#00d2ff; box-shadow:0 0 8px #00d2ff; transition:width 0.5s;\"></div>\n            </div>\n        </div>\n\n        <div style=\"margin-top:15px;\">\n            <div style=\"display:flex; justify-content:space-between; color:#ccd6f6;\"><span>24 Horas:</span> <strong style=\"color:#00ff88;\">{{msg.payload.cons_d}} kWh</strong></div>\n            <div style=\"width:100%; height:6px; background:#112233; margin-top:5px; border-radius:3px; overflow:hidden;\">\n                <div style=\"width:{{msg.payload.cons_d * 2}}%; height:100%; background:#00ff88; box-shadow:0 0 8px #00ff88; transition:width 0.5s;\"></div>\n            </div>\n        </div>\n\n        <div style=\"margin-top:15px;\">\n            <div style=\"display:flex; justify-content:space-between; color:#ccd6f6;\"><span>7 Días:</span> <strong style=\"color:#ffc800;\">{{msg.payload.cons_w}} kWh</strong></div>\n            <div style=\"width:100%; height:6px; background:#112233; margin-top:5px; border-radius:3px; overflow:hidden;\">\n                <div style=\"width:{{msg.payload.cons_w * 0.5}}%; height:100%; background:#ffc800; box-shadow:0 0 8px #ffc800; transition:width 0.5s;\"></div>\n            </div>\n        </div>\n    </div>\n</div>",
+        "storeOutMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 480,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "g_head",
+        "type": "ui-group",
+        "name": "Cabecera",
+        "page": "page_energia",
+        "width": "12",
+        "height": "2",
+        "order": 1,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_control",
+        "type": "ui-group",
+        "name": "Panel de Control",
+        "page": "page_energia",
+        "width": "4",
+        "height": "4",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "b0f5784b1953f4a5",
+        "type": "mqtt-broker",
+        "name": "Mosquitto Local",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "g_gauges",
+        "type": "ui-group",
+        "name": "Telemetría",
+        "page": "page_energia",
+        "width": "8",
+        "height": "4",
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_chart_line",
+        "type": "ui-group",
+        "name": "Tendencia de Carga (W)",
+        "page": "page_energia",
+        "width": "8",
+        "height": "6",
+        "order": 5,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_chart_bar",
+        "type": "ui-group",
+        "name": "Histórico (kWh)",
+        "page": "page_energia",
+        "width": "4",
+        "height": "6",
+        "order": 6,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_alertas",
+        "type": "ui-group",
+        "name": "Diagnóstico y Consumo",
+        "page": "page_energia",
+        "width": "12",
+        "height": "4",
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "page_energia",
+        "type": "ui-page",
+        "name": "Laboratorio Eléctrico",
+        "ui": "base_oficial",
+        "path": "/dashboard",
+        "icon": "bolt",
+        "layout": "grid",
+        "theme": "theme_cyber",
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "base_oficial",
+        "type": "ui-base",
+        "name": "Dashboard UTMACH",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-control",
+            "ui-notification"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 5,
+        "showDisconnectNotification": true,
+        "allowInstall": true
+    },
+    {
+        "id": "theme_cyber",
+        "type": "ui-theme",
+        "name": "Cyber Dark",
+        "colors": {
+            "surface": "#000000",
+            "primary": "#00d2ff",
+            "bgPage": "#020c1b",
+            "groupBg": "#0a192f",
+            "groupOutline": "#00d2ff"
+        },
+        "sizes": {
+            "density": "compact",
+            "pagePadding": "12px",
+            "groupGap": "16px",
+            "groupBorderRadius": "8px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "2b74928c9ae00309",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.30.2"
+        }
+    }
+]
